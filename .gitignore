@@ -1,0 +1,8 @@
+.taste-skill/
+node_modules/
+.cache/
+__pycache__/
+*.pyc
+*.log
+screenshots/
+.DS_Store
