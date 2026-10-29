@@ -68,7 +68,7 @@ class SiteChecks(unittest.TestCase):
         for target in ('#ceremonies', '#approche', '#alain', '#contact'):
             self.assertIn(f'href="{target}"', html)
         css = (SITE / 'styles.css').read_text()
-        self.assertIn('width:236px', css)  # ACR must not revert to a 64px badge.
+        self.assertRegex(css, r'width:\s*236px')  # ACR must not revert to a 64px badge.
         for font in ('dm-sans.ttf', 'newsreader.ttf'):
             self.assertIn(font, css)
             self.assertTrue((SITE / 'assets/fonts' / font).is_file())
