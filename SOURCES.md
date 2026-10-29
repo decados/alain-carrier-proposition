@@ -16,3 +16,12 @@ Les crédits, provenance première et autorisations de republication (portrait i
 
 ## Rédaction proposée
 Titres, textes d'introduction, étapes, FAQ et courriel prérempli sont une proposition éditoriale à faire valider par Alain. Ils ne doivent pas être lus comme des citations ni des engagements de prestation, de prix ou de disponibilité.
+
+## V2 — provenance supplémentaire (preuves V1 conservées ci-dessus)
+- La V1 complète et ses photographies sont préservées dans `site/v1/`; ses crédits restent indéterminés et doivent être confirmés avant toute publication définitive.
+- `site/assets/alain-carrier.jpg` est le portrait original du projet Louis indiqué ci-dessus; il apparaît dans le panneau principal et en reprise dans le pied. Son cadrage d'origine comprend une photographie de mer en arrière-plan, pas une image de cérémonie.
+- `site/assets/alain-portrait.jpg` est une conversion JPEG optimisée de `/home/hermes/celebrantlaicagree-v3/assets/img/AlainCarrier2.png` (766 × 922), utilisée pour le fondu du portrait et la section des mots d'Alain.
+- `site/assets/logo-acr.png` est la copie fidèle du logo transparent `/home/hermes/celebrantlaicagree-v3/assets/img/logo-acr.png` (397 × 297), sans marque reconstruite.
+- `site/assets/louis-lafrance.jpg` est une conversion JPEG optimisée de `/home/hermes/celebrantlaicagree-v3/assets/img/LouisLafrance2.png`, présentée et légendée explicitement comme portrait de Louis Lafrance dans la section réseau. Identité du sujet de ce fichier et droit de republication à faire confirmer par le client.
+- Liens réseau : site du CLA http://www.celebrantlaicagree.com/ et site du groupe Louis https://louislafrance-v3.pages.dev/ . Les appartenances proviennent du dossier client; leur statut actuel doit être confirmé.
+- Textes « ce que fait le célébrant », étapes et choix du courriel : propositions éditoriales, non citation ni garantie. La citation est celle de la fiche d'Alain, reprise sans ajout.
