@@ -1,6 +1,14 @@
 # Proposition Alain Carrier
 
-Site statique autonome en français québécois. Les fichiers à publier, après validation seulement, sont dans `site/`. Ouvrir `site/index.html` directement ou servir `site/` avec `python3 -m http.server 8000 --directory site`. Les chemins sont relatifs pour GitHub Pages en sous-répertoire.
+Site statique autonome en français québécois. Les fichiers à publier, après validation seulement, sont dans `site/`. Ouvrir `site/index.html` directement ou servir `site/` avec `python3 -m http.server 8000 --directory site`. Les chemins sont relatifs et compatibles avec un hébergement statique.
+
+## Hébergement de la proposition
+
+- URL : https://alain-carrier-proposition.pages.dev/
+- Cloudflare Pages, projet `alain-carrier-proposition`, relié au dépôt GitHub `decados/alain-carrier-proposition`.
+- Branche de production : `main`; aucune commande de build; répertoire publié : `site`.
+- Cloudflare déploie automatiquement les changements de `main`. GitHub Actions exécute uniquement les validations, sans publication GitHub Pages.
+- La prévisualisation reste publique et non indexable par sa balise `noindex,nofollow`; il ne s'agit pas d'un accès privé ni du lancement officiel.
 
 Le site ne possède aucun backend, formulaire, stockage local, traceur ou dépendance de compilation. Les choix de sujet restent dans la page et ne sont insérés dans un brouillon `mailto:` que lors du clic sur « Préparer mon courriel ». Aucun message n'est envoyé automatiquement. Un lien courriel direct demeure disponible sans JavaScript.
 
