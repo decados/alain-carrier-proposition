@@ -73,7 +73,7 @@ class SiteChecks(unittest.TestCase):
             self.assertIn(f'href="{target}"', V2)
         self.assertIn('src="./assets/alain-carrier.jpg"', hero)
         self.assertIn('src="./assets/logo-acr.png"', hero)
-        self.assertIn('href="./v1/"', V2)
+
 
     def test_privacy_and_mail_choices(self):
         self.assertEqual({i.get('value') for i in parse(V2).inputs}, {'hommage', 'question'})
@@ -89,6 +89,12 @@ class SiteChecks(unittest.TestCase):
         for subject in ('Premier contact - célébration hommage', 'Question sur les célébrations'):
             self.assertIn(subject, JS)
         self.assertRegex(JS, r'addEventListener\([\'\"]change[\'\"],\s*updateEmail\)')
+
+    def test_finished_site_copy(self):
+        for path in (SITE / 'index.html', SITE / 'v1/index.html'):
+            html = path.read_text().lower()
+            for term in ('proposition', 'pour validation', 'brouillon', 'class="preview"'):
+                self.assertNotIn(term, html, (path, term))
 
     def test_no_unconfirmed_offers(self):
         for term in ('514-', '438-', 'tarif de', 'années d’expérience', 'mariage', 'crémation personnalisée'):
