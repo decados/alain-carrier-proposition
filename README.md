@@ -7,7 +7,8 @@ Site statique autonome en français québécois. Les fichiers à publier, après
 - URL : https://alain-carrier-proposition.pages.dev/
 - Cloudflare Pages, projet `alain-carrier-proposition`, relié au dépôt GitHub `decados/alain-carrier-proposition`.
 - Branche de production : `main`; aucune commande de build; répertoire publié : `site`.
-- Cloudflare déploie automatiquement les changements de `main`. GitHub Actions exécute uniquement les validations, sans publication GitHub Pages.
+- Les changements de `main` sont validés par GitHub Actions, puis un deploy hook limité à ce projet déclenche Cloudflare Pages. Cloudflare récupère les fichiers directement du dépôt GitHub. Aucune clé API Cloudflare générale n'est transmise à GitHub.
+- GitHub Pages est désactivé; seul Cloudflare publie le site.
 - La prévisualisation reste publique et non indexable par sa balise `noindex,nofollow`; il ne s'agit pas d'un accès privé ni du lancement officiel.
 
 Le site ne possède aucun backend, formulaire, stockage local, traceur ou dépendance de compilation. Les choix de sujet restent dans la page et ne sont insérés dans un brouillon `mailto:` que lors du clic sur « Préparer mon courriel ». Aucun message n'est envoyé automatiquement. Un lien courriel direct demeure disponible sans JavaScript.

@@ -1,4 +1,4 @@
-name: Validate static proposal
+name: Validate and deploy Cloudflare proposal
 on:
   push:
     branches: [main]
@@ -16,3 +16,10 @@ jobs:
         run: |
           python3 -m unittest discover -s tests -v
           node --check site/script.js
+      - name: Trigger Cloudflare Pages after validation
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        env:
+          DEPLOY_HOOK: ${{ secrets.CLOUDFLARE_PAGES_DEPLOY_HOOK }}
+        run: |
+          test -n "$DEPLOY_HOOK"
+          curl --fail --silent --show-error --request POST "$DEPLOY_HOOK" --output /dev/null
