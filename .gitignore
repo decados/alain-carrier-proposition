@@ -6,4 +6,5 @@ __pycache__/
 *.log
 screenshots/
 screenshots-v2/
+screenshots-v3/
 .DS_Store

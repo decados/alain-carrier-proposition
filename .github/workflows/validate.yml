@@ -15,7 +15,8 @@ jobs:
       - name: Validate static site
         run: |
           python3 -m unittest discover -s tests -v
-          node --check site/v2.js
+          node --check site/script.js
+          node --check site/v2/v2.js
           node --check site/v1/script.js
       - name: Trigger Cloudflare Pages after validation
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'

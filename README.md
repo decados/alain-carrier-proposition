@@ -1,18 +1,15 @@
-# Proposition Alain Carrier
+# Alain Carrier Rituel — site statique
 
-Site statique autonome en français québécois. La nouvelle proposition V2 est `site/index.html` à la racine; la première proposition V1 reste consultable dans `site/v1/index.html` (`/v1/` sur l'hébergement). Les fichiers à publier, après validation seulement, sont dans `site/`. Ouvrir `site/index.html` directement ou servir `site/` avec `python3 -m http.server 8000 --directory site`. Les chemins sont relatifs et compatibles avec un hébergement statique.
+Trois versions autonomes, sous `site/` :
 
-## Hébergement de la proposition
+- V3 actuelle : `site/index.html`, racine `/` sur https://alain-carrier-proposition.pages.dev/
+- V2 archivée sans bandeau : `site/v2/index.html`, chemin `/v2/`
+- V1 historique inchangée : `site/v1/index.html`, chemin `/v1/`
 
-- URL : https://alain-carrier-proposition.pages.dev/
-- Cloudflare Pages, projet `alain-carrier-proposition`, relié au dépôt GitHub `decados/alain-carrier-proposition`.
-- Branche de production : `main`; aucune commande de build; répertoire publié : `site`.
-- Les changements de `main` sont validés par GitHub Actions, puis un deploy hook limité à ce projet déclenche Cloudflare Pages. Cloudflare récupère les fichiers directement du dépôt GitHub. Aucune clé API Cloudflare générale n'est transmise à GitHub.
-- GitHub Pages est désactivé; seul Cloudflare publie le site.
-- La prévisualisation reste publique et non indexable par sa balise `noindex,nofollow`; il ne s'agit pas d'un accès privé ni du lancement officiel.
+Ces URL publiques ne seront mises à jour qu'après revue, commit poussé et déploiement par la personne responsable. Le présent travail local ne pousse ni ne déploie. Chaque version garde ses propres CSS/JS et assets relatifs; V3 utilise `site/styles.css`, `site/script.js` et ses polices locales. Ouvrir directement les fichiers ou servir `site/` avec `python3 -m http.server 8000 --directory site`.
 
-Les deux versions ne possèdent aucun backend, formulaire, stockage local, traceur ou dépendance de compilation. En V2, le choix de sujet met à jour localement le lien `mailto:`; seul le clic explicite ouvre un brouillon modifiable. Aucun message n'est envoyé automatiquement. Un lien courriel direct et un lien mailto par défaut demeurent disponibles sans JavaScript.
+Aucun backend, formulaire transmis, cookie applicatif, analytique ni stockage. En V3, les radios changent uniquement le lien `mailto:`; sans JS, les liens ouvrent toujours le client de courriel. L'envoi reste une action du visiteur dans son logiciel. La prévisualisation publique reste `noindex,nofollow` avec `robots.txt` dans les trois répertoires; ce n'est pas une protection d'accès.
 
-Contrôles : `python3 -m unittest discover -s tests -v`; `node --check site/v2.js` et `site/v1/script.js`; `node /home/hermes/.hermes/skills/creative/taste-skill/scripts/lint.mjs site/index.html site/v2.css site/v2.js`; `TMPDIR=/home/hermes/alain-carrier-proposition node /home/hermes/.hermes/skills/creative/taste-skill/scripts/inspect.mjs site/index.html --out screenshots-v2`. Les captures de V2 sont hors `site/`, dans `screenshots-v2/` (non commises). `NOTES-V2.md`, `REFERENCE-REVIEW-V2.md`, `REVIEW-V2.md` et `SOURCES.md` documentent la direction et la provenance. Les notes et captures V1 historiques sont conservées.
+Vérification : `python3 -m unittest discover -s tests -v`, `node --check site/script.js`, `node --check site/v2/v2.js`, `node --check site/v1/script.js`, puis Taste lint/inspect détaillés dans `REVIEW-V3.md`. `RESEARCH-V3.md`, `NOTES-V3.md` et `SOURCES.md` donnent le raisonnement et la provenance. Captures non publiées dans `screenshots-v3/` (ignorées par Git).
 
-Avant publication : faire approuver la copie, les photographies et leurs droits, la portée géographique et l'adresse de contact; retirer la mention « Proposition de site — pour validation »; décider explicitement de la levée de `noindex,nofollow` et de `robots.txt` après approbation. Aucune disponibilité, aucun tarif, aucun délai n'est affirmé.
+Le workflow `.github/workflows/validate.yml` valide ces tests avant le deploy hook Cloudflare sur un push à `main`. Ne pas lever `noindex` ni décider du référencement sans approbation. Les textes proposés, les droits des portraits et du logo, l'adresse de contact, le périmètre géographique et le statut actuel des affiliations restent à confirmer avec Alain.

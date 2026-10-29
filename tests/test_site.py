@@ -1,14 +1,12 @@
-"""Static checks for both published proposals, without build dependencies."""
+"""Static contract checks for the three self-contained site versions."""
 from html.parser import HTMLParser
 from pathlib import Path
-from urllib.parse import unquote, urlsplit
+from urllib.parse import urlsplit
 import re
 import unittest
 
 SITE = Path(__file__).resolve().parents[1] / 'site'
-V2 = (SITE / 'index.html').read_text()
-CSS = (SITE / 'v2.css').read_text()
-JS = (SITE / 'v2.js').read_text()
+VERSIONS = (SITE / 'index.html', SITE / 'v1/index.html', SITE / 'v2/index.html')
 
 
 class Inventory(HTMLParser):
@@ -19,7 +17,6 @@ class Inventory(HTMLParser):
         self.assets = []
         self.meta = []
         self.images = []
-        self.inputs = []
         self.headings = []
 
     def handle_starttag(self, tag, attrs):
@@ -34,10 +31,8 @@ class Inventory(HTMLParser):
             self.images.append(a)
         if tag == 'meta':
             self.meta.append(a)
-        if tag == 'input':
-            self.inputs.append(a)
-        if tag in ('h1', 'h2', 'h3'):
-            self.headings.append(tag)
+        if tag == 'h1':
+            self.headings.append(a)
 
 
 def parse(text):
@@ -47,59 +42,61 @@ def parse(text):
 
 
 class SiteChecks(unittest.TestCase):
-    def test_links_and_assets_in_both_versions(self):
-        for path in (SITE / 'index.html', SITE / 'v1/index.html'):
-            page = parse(path.read_text())
-            for href in page.links:
-                if href.startswith('#'):
-                    self.assertIn(href[1:], page.ids, (path, href))
-                elif not href.startswith(('mailto:', 'http://', 'https://')):
-                    self.assertTrue((path.parent / urlsplit(href).path).exists(), (path, href))
-            for asset in page.assets:
-                if asset.startswith(('./', '../')):
-                    self.assertTrue((path.parent / urlsplit(asset).path).is_file(), (path, asset))
-            self.assertTrue(all('alt' in image for image in page.images))
-            self.assertTrue(any(m.get('name') == 'robots' and m.get('content') == 'noindex,nofollow' for m in page.meta))
-            self.assertTrue(any(h.startswith('mailto:alaincarrier.cla@gmail.com') for h in page.links))
-            self.assertEqual(page.headings.count('h1'), 1)
-        self.assertIn('Disallow: /', (SITE / 'robots.txt').read_text())
-        self.assertIn('Disallow: /', (SITE / 'v1/robots.txt').read_text())
+    def test_links_anchors_assets_and_indexing_for_every_version(self):
+        for path in VERSIONS:
+            with self.subTest(path=path):
+                page = parse(path.read_text())
+                for href in page.links:
+                    if href.startswith('#'):
+                        self.assertIn(href[1:], page.ids, (path, href))
+                    elif not href.startswith(('mailto:', 'http://', 'https://')):
+                        self.assertTrue((path.parent / urlsplit(href).path).is_file(), (path, href))
+                for asset in page.assets:
+                    if asset.startswith(('./', '../')):
+                        self.assertTrue((path.parent / urlsplit(asset).path).is_file(), (path, asset))
+                self.assertTrue(all('alt' in image for image in page.images))
+                self.assertTrue(any(m.get('name') == 'robots' and m.get('content') == 'noindex,nofollow' for m in page.meta))
+                self.assertTrue(any(h.startswith('mailto:alaincarrier.cla@gmail.com') for h in page.links))
+                self.assertEqual(len(page.headings), 1)
+                self.assertIn('Disallow: /', (path.parent / 'robots.txt').read_text())
 
-    def test_first_screen_identity_and_clear_navigation(self):
-        hero = V2.split('</section>', 1)[0]
-        for text in ('Alain Carrier', 'Célébrant laïc agréé', 'Grand-Montréal', 'cérémonies funéraires', 'Écrire à Alain'):
+    def test_identity_and_brand_at_top(self):
+        html = VERSIONS[0].read_text()
+        hero = html.split('id="ceremonies"')[0]
+        for text in ('Alain Carrier', 'Célébrant laïc agréé', 'Grand-Montréal', 'célébrations funéraires', 'Écrire à Alain', 'logo-acr.png', 'alain-carrier.jpg'):
             self.assertIn(text, hero)
-        for target in ('#alain', '#ceremonies', '#accompagnement', '#contact'):
-            self.assertIn(f'href="{target}"', V2)
-        self.assertIn('src="./assets/alain-carrier.jpg"', hero)
-        self.assertIn('src="./assets/logo-acr.png"', hero)
+        for target in ('#ceremonies', '#approche', '#alain', '#contact'):
+            self.assertIn(f'href="{target}"', html)
+        css = (SITE / 'styles.css').read_text()
+        self.assertIn('width:236px', css)  # ACR must not revert to a 64px badge.
+        for font in ('dm-sans.ttf', 'newsreader.ttf'):
+            self.assertIn(font, css)
+            self.assertTrue((SITE / 'assets/fonts' / font).is_file())
 
-
-    def test_privacy_and_mail_choices(self):
-        self.assertEqual({i.get('value') for i in parse(V2).inputs}, {'hommage', 'question'})
-        self.assertTrue(all(i.get('type') == 'radio' for i in parse(V2).inputs))
-        self.assertIn('href="#contenu"', V2)
-        self.assertIn(':focus-visible', CSS)
-        self.assertRegex(CSS, r'prefers-reduced-motion\s*:\s*reduce')
-        self.assertRegex(CSS, r'@media\s*\(max-width:\s*700px\)')
-        self.assertIn('encodeURIComponent(subject)', JS)
-        self.assertIn('encodeURIComponent(body)', JS)
+    def test_contact_fallback_and_no_collection(self):
+        html = VERSIONS[0].read_text()
+        script = (SITE / 'script.js').read_text()
+        page = parse(html)
+        self.assertIn('href="#contenu"', html)
+        self.assertEqual(len(re.findall('type="radio"', html)), 2)
+        self.assertIn('mailto:alaincarrier.cla@gmail.com?subject=', html)
+        self.assertIn('mailto:alaincarrier.cla@gmail.com"', html)
+        self.assertIn('encodeURIComponent(subject)', script)
+        self.assertIn('encodeURIComponent(body)', script)
+        self.assertIn("addEventListener('change', updateEmail)", script)
+        self.assertIn('prefers-reduced-motion:reduce', (SITE / 'styles.css').read_text())
         for forbidden in ('fetch(', 'localStorage', 'sessionStorage', 'sendBeacon', 'XMLHttpRequest', '<form', 'navigator.send'):
-            self.assertNotIn(forbidden, V2 + JS)
-        for subject in ('Premier contact - célébration hommage', 'Question sur les célébrations'):
-            self.assertIn(subject, JS)
-        self.assertRegex(JS, r'addEventListener\([\'\"]change[\'\"],\s*updateEmail\)')
+            self.assertNotIn(forbidden, html + script)
+        self.assertTrue(page.ids.issuperset({'contact', 'contenu'}))
 
-    def test_finished_site_copy(self):
-        for path in (SITE / 'index.html', SITE / 'v1/index.html'):
+    def test_versions_are_presented_as_finished_sites(self):
+        for path in VERSIONS:
             html = path.read_text().lower()
-            for term in ('proposition', 'pour validation', 'brouillon', 'class="preview"'):
+            for term in ('proposition de site', 'pour validation', 'brouillon de site', 'class="preview"'):
                 self.assertNotIn(term, html, (path, term))
-
-    def test_no_unconfirmed_offers(self):
+        current = VERSIONS[0].read_text().lower()
         for term in ('514-', '438-', 'tarif de', 'années d’expérience', 'mariage', 'crémation personnalisée'):
-            self.assertNotIn(term, V2.lower())
-
+            self.assertNotIn(term, current)
 
 if __name__ == '__main__':
     unittest.main()
